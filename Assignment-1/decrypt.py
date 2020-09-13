@@ -1,0 +1,55 @@
+import pickle
+
+
+dict  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
+
+class Decrypt:
+	
+	def __init__(self, key = None):
+		if (key == None):
+			self.key = load_substitution_table()    
+		else:
+			self.key = key
+
+
+	def load_substitution_table(self):
+		"""
+		This function loads all permutions and randomized 
+		permutations from external files, map them in a 
+		dictionary and return the dictionary
+		# """
+		# unshuf=open("unshuffuled.list","wb")
+		# allPerms=pickle.load(unshuf)
+
+		# shuf=open("shuffled.list","wb")
+		# allRandPerms=pickle.dump(shuf)
+
+		# table={}
+
+		# for i in range(len(allPerms)):
+		# 	tablle[allPerms[i]]=allRandPerms[i]
+
+		# self.substitution_table=table
+
+		keyFile = open("key", "wb")
+		return pickle.dump(keyFile)
+
+	def decrypt(self, ciphertext):
+		"""
+		Return the encrypted plain text
+		"""
+
+		#TODO: Handle the case if plaintext is odd in length
+
+		plaintxt=''
+
+		txt = ciphertext[:-32]
+
+		for i in range(0,len(txt),2):
+			try:
+				inp= txt[i]+ txt[i+1]
+				plaintxt+=self.key[dict[inp]]
+			except:
+				print("Error occured")
+
+		return plaintxt + ciphertext[-32:]

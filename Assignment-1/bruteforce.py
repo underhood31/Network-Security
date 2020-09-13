@@ -26,6 +26,7 @@ class bruteforce:
 		return lst
 
 	def takeFromFile(self):
+		
 		return []
 
 	def validDecode(self, plain, hashtxt):
