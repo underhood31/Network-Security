@@ -1,6 +1,6 @@
 import pickle
 
-class encrypt:
+class Encrypt:
 	
 	def __init__(self):
 		self.load_substitution_table()
@@ -15,7 +15,7 @@ class encrypt:
 		allPerms=pickle.load(unshuf)
 
 		shuf=open("shuffled.list","wb")
-		allRandPerms=pickle.dump(shuf);
+		allRandPerms=pickle.dump(shuf)
 
 		table={}
 
@@ -24,7 +24,7 @@ class encrypt:
 
 		self.substitution_table=table
 
-	def encrypt(self.plaintext):
+	def encrypt(self, plaintext):
 		"""
 		Return the encrypted plain text
 		"""
