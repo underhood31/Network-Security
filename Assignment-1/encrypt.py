@@ -1,4 +1,7 @@
 import pickle
+import hashlib
+
+dict  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
 
 class Encrypt:
 	
@@ -30,13 +33,16 @@ class Encrypt:
 		"""
 
 		#TODO: Handle the case if plaintext is odd in length
+        if (len(plaintext)%2==1):
+            plaintext+='C'
 
 		cipher=''
 		for i in range(0,len(plaintext),2):
 			try:
 				inp=plaintext[i]+plaintext[i+1]
-				cipher+=self.substitution_table[inp]
+				cipher+=self.substitution_table[dict[inp]]
+                
 			except:
-				cipher+=plaintext[i]
-
+				print("Error occured")
+        cipher += hashlib.md5(plaintext.encode('utf-8')).hexdigest()
 		return cipher
