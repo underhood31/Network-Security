@@ -1,7 +1,7 @@
 import pickle
 import hashlib
 
-dict  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
+indxDict  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
 
 class Encrypt:
 	
@@ -14,18 +14,18 @@ class Encrypt:
 		permutations from external files, map them in a 
 		dictionary and return the dictionary
 		"""
-		unshuf=open("unshuffuled.list","wb")
-		allPerms=pickle.load(unshuf)
+		# unshuf=open("unshuffuled.list","wb")
+		# allPerms=pickle.load(unshuf)
 
-		shuf=open("shuffled.list","wb")
-		allRandPerms=pickle.dump(shuf)
+		# shuf=open("shuffled.list","wb")
+		# allRandPerms=pickle.dump(shuf)
+        shuf=open("encryption.list","wb")
+		self.substitution_table =pickle.load(shuf)
 
-		table={}
+		# for i in range(len(allPerms)):
+		# 	tablle[allPerms[i]]=allRandPerms[i]
 
-		for i in range(len(allPerms)):
-			tablle[allPerms[i]]=allRandPerms[i]
-
-		self.substitution_table=table
+		# self.substitution_table=table
 
 	def encrypt(self, plaintext):
 		"""
@@ -40,7 +40,7 @@ class Encrypt:
 		for i in range(0,len(plaintext),2):
 			try:
 				inp=plaintext[i]+plaintext[i+1]
-				cipher+=self.substitution_table[dict[inp]]
+				cipher+=self.substitution_table[indxDict[inp]]
                 
 			except:
 				print("Error occured")

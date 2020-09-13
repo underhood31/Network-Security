@@ -1,7 +1,7 @@
 import pickle
 
 
-dict  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
+indxDict  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
 
 class Decrypt:
 	
@@ -31,8 +31,8 @@ class Decrypt:
 
 		# self.substitution_table=table
 
-		keyFile = open("key", "wb")
-		return pickle.dump(keyFile)
+		shuf=open("decryption.list","wb")
+		self.substitution_table =pickle.load(shuf)
 
 	def decrypt(self, ciphertext):
 		"""
@@ -48,7 +48,7 @@ class Decrypt:
 		for i in range(0,len(txt),2):
 			try:
 				inp= txt[i]+ txt[i+1]
-				plaintxt+=self.key[dict[inp]]
+				plaintxt+=self.key[indxDict[inp]]
 			except:
 				print("Error occured")
 
