@@ -19,7 +19,7 @@ class Encrypt:
 
 		# shuf=open("shuffled.list","wb")
 		# allRandPerms=pickle.dump(shuf)
-        shuf=open("encryption.list","wb")
+		shuf=open("encryption.list","rb")
 		self.substitution_table =pickle.load(shuf)
 
 		# for i in range(len(allPerms)):
@@ -32,17 +32,16 @@ class Encrypt:
 		Return the encrypted plain text
 		"""
 
-		#TODO: Handle the case if plaintext is odd in length
-        if (len(plaintext)%2==1):
-            plaintext+='C'
+		if (len(plaintext)%2==1):
+			plaintext+='C'
 
 		cipher=''
 		for i in range(0,len(plaintext),2):
 			try:
 				inp=plaintext[i]+plaintext[i+1]
 				cipher+=self.substitution_table[indxDict[inp]]
-                
 			except:
 				print("Error occured")
-        cipher += hashlib.md5(plaintext.encode('utf-8')).hexdigest()
+		cipher += hashlib.md5(plaintext.encode('utf-8')).hexdigest()
+			
 		return cipher

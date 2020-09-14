@@ -7,7 +7,8 @@ class Decrypt:
 	
 	def __init__(self, key = None):
 		if (key == None):
-			self.key = load_substitution_table()    
+			self.key = self.load_substitution_table()  
+
 		else:
 			self.key = key
 
@@ -30,9 +31,10 @@ class Decrypt:
 		# 	tablle[allPerms[i]]=allRandPerms[i]
 
 		# self.substitution_table=table
-
-		shuf=open("decryption.list","wb")
+		print("READ")
+		shuf=open("decryption.list","rb")
 		self.substitution_table =pickle.load(shuf)
+		return self.substitution_table
 
 	def decrypt(self, ciphertext):
 		"""
@@ -46,10 +48,10 @@ class Decrypt:
 		txt = ciphertext[:-32]
 
 		for i in range(0,len(txt),2):
-			try:
-				inp= txt[i]+ txt[i+1]
-				plaintxt+=self.key[indxDict[inp]]
-			except:
-				print("Error occured")
+			# try:
+			inp= txt[i]+ txt[i+1]
+			plaintxt+=self.key[indxDict[inp]]
+			# except:
+			# 	print("Error occured")
 
-		return plaintxt + ciphertext[-32:]
+		return plaintxt #+ ciphertext[-32:]

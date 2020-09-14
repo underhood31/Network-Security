@@ -4,17 +4,16 @@ import hashlib
 
 pairs = ['AA', 'AB', 'AC', 'BB', 'BA', 'BC', 'CC', 'CA', 'CB']
 
-class bruteforce:
+class Bruteforce:
 	
 	def __init__(self):
-		print("Input the cipher-strings for bruteforce")
-        print("Enter 0 if you want to input from file and 1 if you want to input from console")
-        self.ciphers = takeFromConsole()
-		
+		# print("Input the cipher-strings for bruteforce")
+		# print("Enter 0 if you want to input from file and 1 if you want to input from console")
+		# self.ciphers = takeFromConsole()
+		pass
 
 
-	def takeFromConsole(self):
-		n = input("Enter number of ciphertexts: ")
+	def takeFromConsole(self,n):
 		lst = []
 		try:
 			n = int(n)
@@ -44,4 +43,14 @@ class bruteforce:
 					break
 			print("Valid Key found! Key: ", key)
 
+	# def bruteforce(self,ciphertext):
+	# 	allPerm = list(permutations(pairs))
+	# 	for key in allPerm:
+	# 		Decrypter = Decrypt(key)
+	# 		validKey = True
+	# 		cipher=ciphertext
+	# 			validKey = validKey and validDecode(cipher[:-32], cipher[-32:])
+	# 			if (not validKey):
+	# 				break
+	# 		print("Valid Key found! Key: ", key)
 
