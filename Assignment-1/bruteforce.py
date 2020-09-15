@@ -38,19 +38,27 @@ class Bruteforce:
 			Decrypter = Decrypt(key)
 			validKey = True
 			for cipher in self.ciphers:
-				validKey = validKey and validDecode(cipher[:-32], cipher[-32:])
+				brutecrypt=Decrypter.decrypt(cipher)
+				validKey = validKey and validDecode(brutecrypt[:-32], brutecrypt[-32:])
 				if (not validKey):
 					break
 			print("Valid Key found! Key: ", key)
 
-	# def bruteforce(self,ciphertext):
-	# 	allPerm = list(permutations(pairs))
-	# 	for key in allPerm:
-	# 		Decrypter = Decrypt(key)
-	# 		validKey = True
-	# 		cipher=ciphertext
-	# 			validKey = validKey and validDecode(cipher[:-32], cipher[-32:])
-	# 			if (not validKey):
-	# 				break
-	# 		print("Valid Key found! Key: ", key)
+	def bruteforce(self,ciphertext):
+		brutecrypt=''
+		allPerm = list(permutations(pairs))
+		correctKey=''
+		validKey=False
+		for key in allPerm:
+			Decrypter = Decrypt(key)
+			brutecrypt,hashs=Decrypter.decrypt(ciphertext)
+			# print("::",brutecrypt,hashs)
+			validKey = self.validDecode(brutecrypt, hashs)
+			if (validKey):
+				correctKey=key
+				break
+		if not validKey:
+			return "Invalid cyphertext"
+		# print("Key: ", key,"\nPlaintext: ",brutecrypt)
+		return brutecrypt
 

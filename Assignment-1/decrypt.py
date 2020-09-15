@@ -54,4 +54,4 @@ class Decrypt:
 			# except:
 			# 	print("Error occured")
 
-		return plaintxt #+ ciphertext[-32:]
+		return plaintxt,ciphertext[-32:]

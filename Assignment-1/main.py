@@ -92,10 +92,10 @@ def main(window):
 			header="Decrypt"
 			window.addstr(3,w//2-len(header)//2,header,curses.A_BOLD)
 			out="Enter cyphertext to decrypt(Press TAB to go back): "
-			window.addstr(6,w//2-len(out)//2-len(decStr)//2,out)
+			window.addstr(5,w//2-len(out)//2,out)
 			
 			window.attron(curses.color_pair(1))
-			window.addstr(6,w//2-len(decStr)//2+len(out)//2,decStr)
+			window.addstr(6,w//2-len(decStr)//2,decStr)
 			window.attron(curses.color_pair(2))
 
 			if(decOut!=''):
@@ -106,15 +106,16 @@ def main(window):
 			header="Bruteforce"
 			window.addstr(3,w//2-len(header)//2,header,curses.A_BOLD)
 			out="Enter cyphertext to bruteforce(Press TAB to go back): "
-			window.addstr(6,w//2-len(out)//2-len(decStr)//2,out)
+			window.addstr(5,w//2-len(out)//2,out)
 			
 			window.attron(curses.color_pair(1))
-			window.addstr(6,w//2-len(decStr)//2+len(out)//2,decStr)
+			window.addstr(6,w//2-len(decStr)//2,decStr)
 			window.attron(curses.color_pair(2))
 
 			if(decOut!=''):
-				out="Decrepted string is: "+decOut
+				out="Plain text is: "+decOut
 				window.addstr(13,w//2-len(out)//2,out)
+			
 
 
 		inp=window.getch()
@@ -165,7 +166,7 @@ def main(window):
 			elif inp==263:#backspace
 				decStr=decStr[:len(decStr)-1]
 			elif inp==curses.KEY_ENTER or inp==13 or inp==10:
-				decOut=decrypt.decrypt(decStr)
+				decOut,hashs=decrypt.decrypt(decStr)
 		elif curScreen==2:
 			if inp==9:
 				decStr=''
@@ -176,7 +177,7 @@ def main(window):
 			elif inp==263:#backspace
 				decStr=decStr[:len(decStr)-1]
 			elif inp==curses.KEY_ENTER or inp==13 or inp==10:
-				decOut=decrypt.decrypt(decStr)
+				decOut=bruteforce.bruteforce(decStr)
 
 if __name__=="__main__":
 	# print("1. Encrypt")
@@ -192,9 +193,10 @@ if __name__=="__main__":
 	# 	elif val==3:
 	# 		pass
 	# print("ff")
-	# print(encrypt.encrypt("ABAC"))
-	# print(decrypt.decrypt("CCb86fc6b051f63d73de262d4c34e3a0a9"))
-	# print(bruteforce.)
+	# enc=encrypt.encrypt("ABAC")
+	# print(enc)
+	# print(decrypt.decrypt("CCBCabdc72442c6c3a7927a42ccd38932a24"))
+	# print(bruteforce.bruteforce(enc))
 	curses.wrapper(main)
 
 		
