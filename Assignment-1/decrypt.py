@@ -19,19 +19,7 @@ class Decrypt:
 		permutations from external files, map them in a 
 		dictionary and return the dictionary
 		# """
-		# unshuf=open("unshuffuled.list","wb")
-		# allPerms=pickle.load(unshuf)
-
-		# shuf=open("shuffled.list","wb")
-		# allRandPerms=pickle.dump(shuf)
-
-		# table={}
-
-		# for i in range(len(allPerms)):
-		# 	tablle[allPerms[i]]=allRandPerms[i]
-
-		# self.substitution_table=table
-		print("READ")
+		# print("READ")
 		shuf=open("decryption.list","rb")
 		self.substitution_table =pickle.load(shuf)
 		return self.substitution_table
@@ -44,14 +32,12 @@ class Decrypt:
 		#TODO: Handle the case if plaintext is odd in length
 
 		plaintxt=''
-		print("::",ciphertext)
+		# print("::",ciphertext)
 		txt = ciphertext[:-32]
-		print("::",txt)
+		# print("::",txt)
 		for i in range(0,len(txt),2):
 			# try:
 			inp= txt[i]+ txt[i+1]
 			plaintxt+=self.key[indxDict[inp]]
-			# except:
-			# 	print("Error occured")
-
+			
 		return plaintxt,ciphertext[-32:],str(self.key)

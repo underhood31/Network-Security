@@ -14,18 +14,10 @@ class Encrypt:
 		permutations from external files, map them in a 
 		dictionary and return the dictionary
 		"""
-		# unshuf=open("unshuffuled.list","wb")
-		# allPerms=pickle.load(unshuf)
-
-		# shuf=open("shuffled.list","wb")
-		# allRandPerms=pickle.dump(shuf)
+		
 		shuf=open("encryption.list","rb")
 		self.substitution_table =pickle.load(shuf)
 
-		# for i in range(len(allPerms)):
-		# 	tablle[allPerms[i]]=allRandPerms[i]
-
-		# self.substitution_table=table
 
 	def encrypt(self, plaintext):
 		"""

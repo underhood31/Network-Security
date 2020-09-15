@@ -214,7 +214,7 @@ if __name__=="__main__":
 	# print(enc)
 	# print(decrypt.decrypt("CCBCabdc72442c6c3a7927a42ccd38932a24"))
 	# print(bruteforce.bruteforce(enc))
-	# csm.main()
+	csm.main()
 	encrypt=Encrypt()
 	decrypt=Decrypt()
 	bruteforce=Bruteforce()

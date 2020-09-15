@@ -13,20 +13,7 @@ class Bruteforce:
 		pass
 
 
-	def takeFromConsole(self,n):
-		lst = []
-		try:
-			n = int(n)
-		except:
-			print("Invalid input")
-		for i in range(n):
-			lst.append(input("Enter the cipherText: "))
-
-		return lst
-
-	def takeFromFile(self):
-		
-		return []
+	
 
 	def validDecode(self, plain, hashtxt):
 		return (hashlib.md5(plain.encode('utf-8')).hexdigest() == hashtxt or (len(plain)>0 and hashlib.md5(plain[:-1].encode('utf-8')).hexdigest() == hashtxt) )
