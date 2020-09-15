@@ -44,9 +44,9 @@ class Decrypt:
 		#TODO: Handle the case if plaintext is odd in length
 
 		plaintxt=''
-		# print("::",ciphertext)
+		print("::",ciphertext)
 		txt = ciphertext[:-32]
-		# print("::",txt)
+		print("::",txt)
 		for i in range(0,len(txt),2):
 			# try:
 			inp= txt[i]+ txt[i+1]

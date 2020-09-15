@@ -218,11 +218,11 @@ if __name__=="__main__":
 	encrypt=Encrypt()
 	decrypt=Decrypt()
 	bruteforce=Bruteforce()
-	# a,b=bruteforce.bruteforce()
-	# print(a,b)
+	a,b=bruteforce.bruteforce()
+	print(a,b)
 	# enc=encrypt.encrypt("ABAC")
 	# print(enc)
 	# print(decrypt.decrypt(enc[0]))
-	curses.wrapper(main)
+	# curses.wrapper(main)
 
 		

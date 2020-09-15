@@ -52,6 +52,9 @@ class Bruteforce:
 		ciphers.append(f.readline()[:-1])
 		ciphers.append(f.readline()[:-1])
 		ciphers.append(f.readline())
+		if ciphers[-1][-1]=='\n':
+			ciphers[-1]=ciphers[-1][:-1]
+			pass
 		# except:
 		# 	return [],""
 
