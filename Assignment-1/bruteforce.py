@@ -44,21 +44,47 @@ class Bruteforce:
 					break
 			print("Valid Key found! Key: ", key)
 
-	def bruteforce(self,ciphertext):
+	def bruteforce(self):
+		ciphers=[]
+		# try:
+		f = open("ciphers.txt", "r")
+		ciphers.append(f.readline()[:-1])
+		ciphers.append(f.readline()[:-1])
+		ciphers.append(f.readline()[:-1])
+		ciphers.append(f.readline())
+		# except:
+		# 	return [],""
+
 		brutecrypt=''
 		allPerm = list(permutations(pairs))
 		correctKey=''
 		validKey=False
+		validarr=[]
 		for key in allPerm:
 			Decrypter = Decrypt(key)
-			brutecrypt,hashs=Decrypter.decrypt(ciphertext)
+			brutecrypt,hashs,keyy=Decrypter.decrypt(ciphers[0])
 			# print("::",brutecrypt,hashs)
 			validKey = self.validDecode(brutecrypt, hashs)
-			if (validKey):
-				correctKey=key
-				break
+			if (not validKey):
+				continue
+			else:
+				#test cipher 2
+				c2,hashs2,keyy1=Decrypter.decrypt(ciphers[1])
+				c3,hashs3,keyy2=Decrypter.decrypt(ciphers[2])
+				c4,hashs4,keyy3=Decrypter.decrypt(ciphers[3])
+				if(self.validDecode(c2,hashs2) and self.validDecode(c3,hashs3) and self.validDecode(c4,hashs4)):
+					correctKey=key
+					validarr.append(brutecrypt)
+					validarr.append(c2)
+					validarr.append(c3)
+					validarr.append(c4)
+					break
+				else:
+					validKey=False
+
+
 		if not validKey:
-			return "Invalid cyphertext"
+			return [],"Not found"
 		# print("Key: ", key,"\nPlaintext: ",brutecrypt)
-		return brutecrypt
+		return validarr,str(correctKey)
 

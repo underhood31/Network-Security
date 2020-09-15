@@ -2,9 +2,10 @@ import curses
 from encrypt import *
 from decrypt import *
 from bruteforce import *
-encrypt=Encrypt()
-decrypt=Decrypt()
-bruteforce=Bruteforce()
+import model as csm
+encrypt=None
+decrypt=None
+bruteforce=None
 
 def main(window):
 	curses.curs_set(0)
@@ -21,6 +22,10 @@ def main(window):
 	charChoice=0
 	decStr=''
 	decOut=''
+	enkey=''
+	brutarr=[]
+	dic  = {'AA':0, 'AB':1, 'AC':2, 'BB':3, 'BA':4, 'BC':5, 'CC':6, 'CA':7, 'CB':8}
+
 	while True:
 		window.clear()
 		string="Network Security Assignment 1"
@@ -44,10 +49,10 @@ def main(window):
 
 			if homeChoice==2:
 				window.attron(curses.color_pair(1))
-				window.addstr(10,w//2-len("Bruteforce")//2,"Bruteforce")
+				window.addstr(10,w//2-len("Bruteforce, load from ./ciphers.txt")//2,"Bruteforce, load from ./ciphers.txt")
 				window.attron(curses.color_pair(2))
 			else:
-				window.addstr(10,w//2-len("Bruteforce")//2,"Bruteforce")
+				window.addstr(10,w//2-len("Bruteforce, load from ./ciphers.txt")//2,"Bruteforce, load from ./ciphers.txt")
 		elif curScreen==0:
 			header="Encrypt"
 			window.addstr(3,w//2-len(header)//2,header,curses.A_BOLD)
@@ -88,6 +93,9 @@ def main(window):
 			if(encOut!=''):
 				out="Encrypted string is: "+encOut
 				window.addstr(13,w//2-len(out)//2,out)
+				window.addstr(14,w//2-len(str(dic))//2,str(dic))
+				window.addstr(15,w//2-len(enkey)//2,enkey)
+
 		elif curScreen==1:
 			header="Decrypt"
 			window.addstr(3,w//2-len(header)//2,header,curses.A_BOLD)
@@ -101,20 +109,29 @@ def main(window):
 			if(decOut!=''):
 				out="Decrepted string is: "+decOut
 				window.addstr(13,w//2-len(out)//2,out)
+				window.addstr(14,w//2-len(str(dic))//2,str(dic))
+				window.addstr(15,w//2-len(enkey)//2,enkey)
 			
 		elif curScreen==2:
-			header="Bruteforce"
+			header="Bruteforce, , loaded from ./ciphers.txt"
 			window.addstr(3,w//2-len(header)//2,header,curses.A_BOLD)
-			out="Enter cyphertext to bruteforce(Press TAB to go back): "
+			out="Press TAB to go back "
 			window.addstr(5,w//2-len(out)//2,out)
 			
 			window.attron(curses.color_pair(1))
-			window.addstr(6,w//2-len(decStr)//2,decStr)
+			window.addstr(7,w//2-len("> Load")//2,"> Load")
 			window.attron(curses.color_pair(2))
 
-			if(decOut!=''):
+			
+
+			if(len(brutarr)>0):
+				for i in range(len(brutarr)):
+					window.addstr(9+i,w//2-(len(brutarr[i]))//2,brutarr[i])
+
 				out="Plain text is: "+decOut
 				window.addstr(13,w//2-len(out)//2,out)
+				window.addstr(14,w//2-len(str(dic))//2,str(dic))
+				window.addstr(15,w//2-len(enkey)//2,enkey)
 			
 
 
@@ -150,7 +167,7 @@ def main(window):
 				 and charChoice==3:
 				encString=encString[:len(encString)-1]
 			elif inp==68 or inp==100:
-				encOut=encrypt.encrypt(encString)
+				encOut,enkey=encrypt.encrypt(encString)
 			elif inp==9:
 				charChoice=0
 				encString=''
@@ -166,18 +183,18 @@ def main(window):
 			elif inp==263:#backspace
 				decStr=decStr[:len(decStr)-1]
 			elif inp==curses.KEY_ENTER or inp==13 or inp==10:
-				decOut,hashs=decrypt.decrypt(decStr)
+				decOut,hashs,enkey=decrypt.decrypt(decStr)
 		elif curScreen==2:
 			if inp==9:
 				decStr=''
 				curScreen=-1
 				decOut=''
-			elif chr(inp).isalnum() and inp < 96+26:
-				decStr+=chr(inp)
-			elif inp==263:#backspace
-				decStr=decStr[:len(decStr)-1]
+			# elif chr(inp).isalnum() and inp < 96+26:
+			# 	decStr+=chr(inp)
+			# elif inp==263:#backspace
+			# 	decStr=decStr[:len(decStr)-1]
 			elif inp==curses.KEY_ENTER or inp==13 or inp==10:
-				decOut=bruteforce.bruteforce(decStr)
+				brutarr,enkey=bruteforce.bruteforce()
 
 if __name__=="__main__":
 	# print("1. Encrypt")
@@ -197,6 +214,15 @@ if __name__=="__main__":
 	# print(enc)
 	# print(decrypt.decrypt("CCBCabdc72442c6c3a7927a42ccd38932a24"))
 	# print(bruteforce.bruteforce(enc))
+	# csm.main()
+	encrypt=Encrypt()
+	decrypt=Decrypt()
+	bruteforce=Bruteforce()
+	# a,b=bruteforce.bruteforce()
+	# print(a,b)
+	# enc=encrypt.encrypt("ABAC")
+	# print(enc)
+	# print(decrypt.decrypt(enc[0]))
 	curses.wrapper(main)
 
 		

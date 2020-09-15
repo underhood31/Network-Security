@@ -44,4 +44,4 @@ class Encrypt:
 				print("Error occured")
 		cipher += hashlib.md5(plaintext.encode('utf-8')).hexdigest()
 			
-		return cipher
+		return cipher,str(self.substitution_table)
