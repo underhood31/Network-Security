@@ -4,7 +4,10 @@ from bitarray import util
 def get_column(arr, i):
     return [row[i] for row in arr]
 def get_xor(arr):
-    pass
+    ans  = arr[0]
+    for i in range(1, len(arr)):
+        ans  = ans ^ arr[i]
+    return ans
 
 class AES_Encryptor:
     def __init__(self):
