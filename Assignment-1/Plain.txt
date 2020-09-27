@@ -1,5 +1,5 @@
 {'AA': 0, 'AB': 1, 'AC': 2, 'BB': 3, 'BA': 4, 'BC': 5, 'CC': 6, 'CA': 7, 'CB': 8}
-                  ['BA', 'AC', 'CB', 'CA', 'BC', 'CC', 'BB', 'AB', 'AA']
+       
 ABCABC
 BACBBACBBBAC
 CCCCABACCABC
