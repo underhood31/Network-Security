@@ -1,5 +1,15 @@
-from bitarray import bitarray
+ from bitarray import bitarray
 from bitarray import util
+from pyfinite import ffield
+
+# # Example code for finite fields
+# a = 0xbf
+# b = 0x03
+# F = ffield.FField(8, gen=0b100011011, useLUT=0)  #Gen is the modulus term and useLookUpTables=false
+# c = F.Multiply(a, b)
+# print(hex(c))
+
+
 
 def get_column(arr, i):
     return [row[i] for row in arr]
@@ -16,6 +26,14 @@ class AES_Encryptor:
         self.multiplyTable = None
         self.mixColTable = None
         self.key = None #rounds *4*4
+        self.transformationTable=[[1, 0, 0, 0, 1, 1, 1, 1],
+                                  [1, 1, 0, 0, 0, 1, 1, 1],
+                                  [1, 1, 1, 0, 0, 0, 1, 1],
+                                  [1, 1, 1, 1, 0, 0, 0, 1],
+                                  [1, 1, 1, 1, 1, 0, 0, 0],
+                                  [0, 1, 1, 1, 1, 1, 0, 0],
+                                  [0, 0, 1, 1, 1, 1, 1, 0],
+                                  [0, 0, 0, 1, 1, 1, 1, 1]]
 
     def to_state(self, inp):
         """
