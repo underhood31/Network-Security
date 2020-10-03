@@ -1,7 +1,7 @@
- from bitarray import bitarray
+from bitarray import bitarray
 from bitarray import util
 from pyfinite import ffield
-
+import copy
 # # Example code for finite fields
 # a = 0xbf
 # b = 0x03
@@ -19,14 +19,40 @@ def get_xor(arr):
         ans  = ans ^ arr[i]
     return ans
 
+def leftshift(bitarr, shifts):
+    """
+    The circular left shift for bitarray
+    """
+    return bitarr[shifts:] + (bitarr[0:shifts])
+
+def rightshift(bitarr, shifts):
+    """
+    The circular right shift for bitarray
+    """
+    return bitarr[-shifts:] + (bitarr[0:-shifts])
+
+
 class AES_Encryptor:
-    def __init__(self):
+    def __init__(self, key, rounds=10):
         super().__init__()
+        self.key=to_state(convertToBitarray(key))
+        if(rounds==10):
+            self.keySize=128
+        elif(rounds==12):
+            self.keySize=192
+        elif(rounds==14):
+            self.keySize=256
+        else:
+            raise Exception("Only 10, 12, 14 rounds allowed")
+        self.roundKey=None
+        self.rounds=rounds
         self.substitutionTable = None
         self.multiplyTable = None
         self.mixColTable = None
+        self.rc=0x01
+        self.GF = ffield.FField(8, gen=0b100011011, useLUT=0)
         self.key = None #rounds *4*4
-        self.transformationTable=[[0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76],
+        self.substitutionTable  =[[0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76],
                                   [0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0],
                                   [0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xA5,0xe5,0xf1,0x71,0xd8,0x31,0x15],
                                   [0x04,0xc7,0x23,0xc3,0x18,0x96,0x05,0x9a,0x07,0x12,0x80,0xe2,0xeb,0x27,0xb2,0x75],
@@ -41,11 +67,72 @@ class AES_Encryptor:
                                   [0xba,0x78,0x25,0x2e,0x1c,0xa6,0xb4,0xc6,0xe8,0xdd,0x74,0x1f,0x4b,0xbd,0x8b,0x8a],
                                   [0x70,0x3e,0xb5,0x66,0x48,0x03,0xf6,0x0e,0x61,0x35,0x57,0xb9,0x86,0xc1,0x1d,0x9e],
                                   [0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf],
-                                  [0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16]]
+                                  [0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16]]  #phew...
+
+    def convertToBitarray(self,key):
+        """
+            Converts given key into bitarray
+        """
+        inString=bin(key)[2:]
+        rem=self.keySize-len(inString)
+        inString="0"*rem+inString
+        return bitarray(inString)
+
+    def getRoundkey(self):
+        """
+            Returns the key to be used in the current round in form of [32bits, 32bits, 32bits, 32bits]
+
+            ----------------------------------------------------TODO: ADD compatibility for 192 and 256 bit input-----------------------------------------
+        """
+
+        if(self.roundKey==None):
+            self.roundKey=[]
+            for i in range(len(self.key)):
+                entry=bitarray()
+                for j in range(len(self.key)):
+                    entry=entry+self.key[j][i]
+                self.roundKey.append(entry)
+        else:
+            g=copy.deepcopy(self.roundKey[-1])
+            
+            #left shift
+            g=leftshift(g,1)
+
+            #substitution
+            new_g=bitarray()
+            for i in range(0,32,8):
+                num=int(g[i:i+8].to01(),2)
+                num=hex(num)[2:]
+                num='0'*(2-len(num))+num
+                inString=(bin(substitutionTable[int(num[0],16)][int(num[1],16)])[2:])
+                rem=8-len(inString)
+                inString="0"*rem+inString
+                new_g+=bitarray(inString)
+            g=new_g
+
+            rc_cur=bin(self.rc)[2:]
+            rc_cur='0'*(8-len(rc_cur))+rc_cur
+            rcbit=bitarray(rc_cur+'0'*24)
+            self.rc=self.GF.Multiply(2,self.rc)
+
+            #xoring rc and g
+            g=g^rcbit
+
+            #now generating key
+            newRoundkey=[]
+
+            newRoundkey.append(self.roundKey[0]^g)
+            newRoundkey.append(self.roundKey[1]^newRoundkey[0])
+            newRoundkey.append(self.roundKey[2]^newRoundkey[1])
+            newRoundkey.append(self.roundKey[3]^newRoundkey[2])
+
+            self.roundKey=newRoundkey
+        return self.roundKey
 
     def to_state(self, inp):
         """
             converts 128 bit number to state representation
+            ----------------------------------------------------TODO: ADD compatibility for 192 and 256 bit input-----------------------------------------
         """
         state = []
         j = 0
@@ -57,7 +144,6 @@ class AES_Encryptor:
                 i+=32
             state.append(s)
             j+=8
-
         return state
 
 
