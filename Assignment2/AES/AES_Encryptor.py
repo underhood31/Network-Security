@@ -12,7 +12,7 @@ import copy
 
 
 def get_column(arr, i):
-    return [row[i] for row in arr]
+    return [util.ba2int(row[i]) for row in arr]
 def get_xor(arr):
     ans  = arr[0]
     for i in range(1, len(arr)):
@@ -48,7 +48,7 @@ class AES_Encryptor:
         self.rounds=rounds
         self.substitutionTable = None
         self.multiplyTable = None
-        self.mixColTable = None
+        self.mixColTable = [[0x02, 0x03, 0x01, 0x01], [0x01, 0x02, 0x03, 0x01], [0x01, 0x01, 0x02, 0x03], [0x03, 0x01, 0x01, 0x02]]
         self.rc=0x01
         self.GF = ffield.FField(8, gen=0b100011011, useLUT=0)
         self.key = None #rounds *4*4
@@ -77,6 +77,19 @@ class AES_Encryptor:
         rem=self.keySize-len(inString)
         inString="0"*rem+inString
         return bitarray(inString)
+
+    def gfMultiply(self, a,b ):
+        """
+            Performs galwa field 2^8 multiplication
+            a -> Integer
+            b -> Integer
+            Return type -> bitarray
+        """
+        F = ffield.FField(8, gen=0b100011011, useLUT=0)  #Gen is the modulus term and useLookUpTables=false
+        c = F.Multiply(a, b)
+
+        return util.int2ba(int = c, length=8, endian='big')
+            
 
     def getRoundkey(self):
         """
@@ -131,8 +144,8 @@ class AES_Encryptor:
 
     def to_state(self, inp):
         """
-            converts 128 bit number to state representation
-            ----------------------------------------------------TODO: ADD compatibility for 192 and 256 bit input-----------------------------------------
+            converts 128 bit number to tate representation
+            ---------------------------s-------------------------TODO: ADD compatibility for 192 and 256 bit input-----------------------------------------
         """
         state = []
         j = 0
@@ -153,7 +166,7 @@ class AES_Encryptor:
     def subBytes(self, state):
         for rowNum, row in enumerate(state):
             for colNum, inp in enumerate(row):
-                state[rowNum, colNum] = self.substitutionTable[util.ba2int(inp[:4])][util.ba2int(inp[4:])]
+                state[rowNum, colNum] = util.int2ba(self.substitutionTable[util.ba2int(inp[:4])][util.ba2int(inp[4:])], length=8, endian='big')
         return state   
 
     
@@ -176,7 +189,7 @@ class AES_Encryptor:
                 arr = []
 
                 for k in range(4):
-                    arr.append(self.multiplyTable[self.mixColTable[j][k]][col[k]])
+                    arr.append(self.gfMultiply(self.mixColTable[j][k], col[k]))
 
                 state[j][i] = get_xor(arr)
         return state
