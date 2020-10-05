@@ -35,7 +35,6 @@ def rightshift(bitarr, shifts):
 class AES_Encryptor:
     def __init__(self, key, rounds=10):
         super().__init__()
-        self.key=to_state(convertToBitarray(key))
         if(rounds==10):
             self.keySize=128
         elif(rounds==12):
@@ -44,6 +43,7 @@ class AES_Encryptor:
             self.keySize=256
         else:
             raise Exception("Only 10, 12, 14 rounds allowed")
+        self.key=self.to_state(self.convertToBitarray(key))
         self.roundKey=None
         self.rounds=rounds
         self.substitutionTable = None
@@ -51,7 +51,6 @@ class AES_Encryptor:
         self.mixColTable = [[0x02, 0x03, 0x01, 0x01], [0x01, 0x02, 0x03, 0x01], [0x01, 0x01, 0x02, 0x03], [0x03, 0x01, 0x01, 0x02]]
         self.rc=0x01
         self.GF = ffield.FField(8, gen=0b100011011, useLUT=0)
-        self.key = None #rounds *4*4
         self.substitutionTable  =[[0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76],
                                   [0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0],
                                   [0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xA5,0xe5,0xf1,0x71,0xd8,0x31,0x15],
@@ -117,7 +116,7 @@ class AES_Encryptor:
                 num=int(g[i:i+8].to01(),2)
                 num=hex(num)[2:]
                 num='0'*(2-len(num))+num
-                inString=(bin(substitutionTable[int(num[0],16)][int(num[1],16)])[2:])
+                inString=(bin(self.substitutionTable[int(num[0],16)][int(num[1],16)])[2:])
                 rem=8-len(inString)
                 inString="0"*rem+inString
                 new_g+=bitarray(inString)
