@@ -1,6 +1,7 @@
 from bitarray import bitarray
 from bitarray import util
 from pyfinite import ffield
+import sys
 import copy
 # # Example code for finite fields
 # a = 0xbf
@@ -86,8 +87,7 @@ class AES_Encryptor:
         """
         F = ffield.FField(8, gen=0b100011011, useLUT=0)  #Gen is the modulus term and useLookUpTables=false
         c = F.Multiply(a, b)
-
-        return util.int2ba(int = c, length=8, endian='big')
+        return util.int2ba( c, length=8, endian='big')
             
 
     def getRoundkey(self):
@@ -165,7 +165,7 @@ class AES_Encryptor:
     def subBytes(self, state):
         for rowNum, row in enumerate(state):
             for colNum, inp in enumerate(row):
-                state[rowNum, colNum] = util.int2ba(self.substitutionTable[util.ba2int(inp[:4])][util.ba2int(inp[4:])], length=8, endian='big')
+                state[rowNum][colNum] = util.int2ba(self.substitutionTable[util.ba2int(inp[:4])][util.ba2int(inp[4:])], length=8, endian='big')
         return state   
 
     
@@ -193,34 +193,62 @@ class AES_Encryptor:
                 state[j][i] = get_xor(arr)
         return state
 
-    def addRoundKey(self, state, roundNo):
+    def convertKeyto4x4(self,key):
+        toRet=[]
+        for i in range(4):
+            temp=[0]*4
+            toRet.append(temp)
+
+        for j in range(len(key)):
+            num=key[j].to01()
+            temp=[]
+            for i in range(0,32,8):
+                toRet[i//8][j]=bitarray(num[i:i+8])
+        return toRet
+
+    def addRoundKey(self, state):
+        key=self.getRoundkey()
+        key=self.convertKeyto4x4(key)
+
         for i in range(4):
             for j in range(4):
-                state[i][j] = state[i][j] ^ self.key[roundNo][i][j]
-
+                state[i][j] = state[i][j] ^ key[i][j]
         return state
 
-    def normalRound(self, state, roundNo):
+    def normalRound(self, state):
         self.subBytes(state)
         self.shiftRows(state)
         self.mixColumns(state)
-        self.addRoundKey(state, roundNo)
+        self.addRoundKey(state)
         
 
     def lastRound(self, state):
         self.subBytes(state)
         self.shiftRows(state)
-        self.addRoundKey(state, 9)
+        self.addRoundKey(state)
         
 
+    def print_mat(self,state):
+        for i in state:
+            for j in i:
+                print(hex(int(j.to01(),2)),end="\t")
+            print()
+        print()
     def encrypt(self , plaintext):
+        #Plaintext as string of bits "011010101"
+        #TODO: if len(plaintext)>128 do looping
+        plaintext='0'*(128-len(plaintext))+plaintext
+        plaintext=bitarray(plaintext)
         state = self.to_state(plaintext)
+
+        self.addRoundKey(state)
         for i in range(9):
-            self.normalRound(state, i)
+            self.normalRound(state)
         self.lastRound(state)
         encrypted = bitarray(128)
         for i in range(4):  #colNo
             for j in range(4):  #rowNo
                 encrypted[32*i + 8*j : 32*i + 8*j + 8] = state[j][i]
+        self.print_mat(state)
         return encrypted
 
