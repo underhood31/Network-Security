@@ -108,7 +108,7 @@ class AES_Encryptor:
             g=copy.deepcopy(self.roundKey[-1])
             
             #left shift
-            g=leftshift(g,1)
+            g=leftshift(g,8)
 
             #substitution
             new_g=bitarray()
