@@ -1,8 +1,33 @@
 import AES_Encryptor
+import AES_Decryptor
 import genRandKey
 import numpy as np
+from bitarray import bitarray
+
+def print_mat(state):
+        for i in state:
+            for j in i:
+                print(hex(int(j.to01(),2)),end="\t")
+            print()
+        print()
+
+def convertKeyto4x4(key):
+    toRet=[]
+    for i in range(4):
+        temp=[0]*4
+        toRet.append(temp)
+
+    for j in range(len(key)):
+        num=key[j].to01()
+        temp=[]
+        for i in range(0,32,8):
+            toRet[i//8][j]=bitarray(num[i:i+8])
+    return toRet
+
 
 def print_matrix(roundKey,i):
+	print()
+	print_mat(convertKeyto4x4(roundKey))
 	mat=np.zeros([4,4],dtype='object')
 	r=0
 	for j in range(len(roundKey)):
@@ -17,8 +42,14 @@ def print_matrix(roundKey,i):
 if __name__=="__main__":
 	# kg=genRandKey.GenerateRandomKey()
 	# key=kg.generate(128)
-	key=0x2b7e151628aed2a6abf7158809cf4f3c
-	enc=AES_Encryptor.AES_Encryptor(key)
+	#-----------For encryptor---------------
+	# key=0x000102030405060708090a0b0c0d0e0f
+	# enc=AES_Encryptor.AES_Encryptor(key)
+	# for i in range(11):
+	# 	print_matrix(enc.getRoundkey(),i)
+
+	#-----------For decryptor---------------
+	key=0x000102030405060708090a0b0c0d0e0f
+	enc=AES_Decryptor.AES_Decryptor(key)
 	for i in range(11):
 		print_matrix(enc.getRoundkey(),i)
-
