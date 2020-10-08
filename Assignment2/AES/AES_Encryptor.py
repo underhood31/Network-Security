@@ -251,18 +251,22 @@ class AES_Encryptor:
         plaintext='0'*(128-len(plaintext))+plaintext
         plaintext=bitarray(plaintext)
         state = self.to_state(plaintext)
+        print("Input")
+        self.print_mat(state)
         self.addRoundKey(state)
-        # print("Initial")
-        # self.print_mat(state)
+        print("After initial add key round")
+        self.print_mat(state)
         for i in range(9):
-            # print("Round",i+1)
             self.normalRound(state)
+            print("Round",i+1)
+            self.print_mat(state)
             
         self.lastRound(state)
         encrypted = bitarray(128)
         for i in range(4):  #colNo
             for j in range(4):  #rowNo
                 encrypted[32*i + 8*j : 32*i + 8*j + 8] = state[j][i]
-        # self.print_mat(state)
+        print("Round 10")
+        self.print_mat(state)
         return encrypted
 

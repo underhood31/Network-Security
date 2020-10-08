@@ -275,15 +275,18 @@ class AES_Decryptor:
         plaintext='0'*(128-len(plaintext))+plaintext
         plaintext=bitarray(plaintext)
         state = self.to_state(plaintext)
-        # print("Input")
-        # self.print_mat(state)
+        print("Input")
+        self.print_mat(state)
         self.lastRound(state)
+        print("After round 1")
+        self.print_mat(state)
         for i in range(9):
-            # print("Round ",i+2)
             self.normalRound(state)
+            print("Round ",i+2)
+            self.print_mat(state)
         self.addRoundKey(state)
-        # print("after last add key")
-        # self.print_mat(state)
+        print("After last add key")
+        self.print_mat(state)
         decrypted = bitarray(128)
         for i in range(4):  #colNo
             for j in range(4):  #rowNo
