@@ -3,14 +3,6 @@ from bitarray import util
 from pyfinite import ffield
 import sys
 import copy
-# # Example code for finite fields
-# a = 0xbf
-# b = 0x03
-# F = ffield.FField(8, gen=0b100011011, useLUT=0)  #Gen is the modulus term and useLookUpTables=false
-# c = F.Multiply(a, b)
-# print(hex(c))
-
-
 
 def get_column(arr, i):
     return [util.ba2int(row[i]) for row in arr]
@@ -61,7 +53,7 @@ class AES_Decryptor:
                                   [0x1f,0xdd,0xa8,0x33,0x88,0x07,0xc7,0x31,0xb1,0x12,0x10,0x59,0x27,0x80,0xec,0x5f],
                                   [0x60,0x51,0x7f,0xa9,0x19,0xb5,0x4a,0x0d,0x2d,0xe5,0x7a,0x9f,0x93,0xc9,0x9c,0xef],
                                   [0xa0,0xe0,0x3b,0x4d,0xae,0x2a,0xf5,0xb0,0xc8,0xeb,0xbb,0x3c,0x83,0x53,0x99,0x61],
-                                  [0x17,0x2b,0x04,0x7e,0xba,0x77,0xd6,0x26,0xe1,0x69,0x14,0x63,0x55,0x21,0x0c,0x7d]] # he prabhu  #phew...
+                                  [0x17,0x2b,0x04,0x7e,0xba,0x77,0xd6,0x26,0xe1,0x69,0x14,0x63,0x55,0x21,0x0c,0x7d]]
        	self.UnInversedSubstitutionTable = [[0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76],
                                   [0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0],
                                   [0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xA5,0xe5,0xf1,0x71,0xd8,0x31,0x15],
@@ -83,10 +75,7 @@ class AES_Decryptor:
             self.key=self.to_state(self.convertToBitarray(key))
             for i in range(11):
             	self.allRoundKeys.insert(0,self.generateRoundKeys())
-        # elif(rounds==12):
-        #     self.keySize=192
-        # elif(rounds==14):
-        #     self.keySize=256
+       
         else:
             raise Exception("Only 10 rounds allowed")
   
@@ -240,28 +229,21 @@ class AES_Decryptor:
 
     def normalRound(self, state):
         self.addRoundKey(state)
-        # print("add key")
-        # self.print_mat(state)
+        
         self.mixColumns(state)
-        # print("mix cols")
-        # self.print_mat(state)
+        
         self.shiftRows(state)
-        # print("shift rows")
-        # self.print_mat(state)
+      
         self.subBytes(state)
-        # print("substitution")
-        # self.print_mat(state)
+     
 
     def lastRound(self, state):
         self.addRoundKey(state)
-        # print(" 1st Round add key")
-        # self.print_mat(state)
+     
         self.shiftRows(state)
-        # print(" 1st shift rows")
-        # self.print_mat(state)
+       
         self.subBytes(state)
-        # print(" 1st round sub bytes")
-        # self.print_mat(state)
+     
 
     def print_mat(self,state):
         for i in state:

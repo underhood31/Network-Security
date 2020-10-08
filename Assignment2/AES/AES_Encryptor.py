@@ -3,12 +3,6 @@ from bitarray import util
 from pyfinite import ffield
 import sys
 import copy
-# # Example code for finite fields
-# a = 0xbf
-# b = 0x03
-# F = ffield.FField(8, gen=0b100011011, useLUT=0)  #Gen is the modulus term and useLookUpTables=false
-# c = F.Multiply(a, b)
-# print(hex(c))
 
 
 
@@ -217,20 +211,14 @@ class AES_Encryptor:
         return state
 
     def normalRound(self, state):
-        # print("Before subs")
-        # self.print_mat(state)
+     
         self.subBytes(state)
-        # print("After subs")
-        # self.print_mat(state)
+      
         self.shiftRows(state)
-        # print("After rows")
-        # self.print_mat(state)
+      
         self.mixColumns(state)
-        # print("After cols")
-        # self.print_mat(state)
+        
         self.addRoundKey(state)
-        # print("after roundkey")
-        # self.print_mat(state)
         
 
     def lastRound(self, state):

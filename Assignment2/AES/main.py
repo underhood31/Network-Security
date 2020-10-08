@@ -31,10 +31,10 @@ if __name__=="__main__":
 			print(st,hex(int(enc.decrypt(data_b).to01(),2))[2:])
 
 			c=input("Wanna continue?(Y/n) ")
-			if c=="Y" or c=="y":
-				continue
-			else:
+			if c=="n":
 				break
+			else:
+				continue
 		elif i=="3":
 			break
 		else: 
