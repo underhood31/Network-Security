@@ -1,15 +1,16 @@
 import socket
 import rsa
-
+import pickle
 # Key info with PKDA (Better if we read this from a file and write a script to generate that file using rsa.newkey(1024))
 
-KpubA = {'e': 2, 'n': 4}    
-KpubB = ()
-KpriPKDA = {'d': 2, 'p': 3, 'q': 4}
+mfile = open("pkda_keyInfo", "rb+")
+availableKeys = pickle.load(mfile)
 
+KpubA = availableKeys['k_pub_a']
+KpubB = availableKeys['k_pub_b']
+KpriPKDA = availableKeys['k_pri_pkda']
 
-myPrivateKey = rsa.PrivateKey(n=KpriPKDA['n'], e=KpriPKDA['e'] , d=KpriPKDA['d'], p=KpriPKDA['p'], q=KpriPKDA['q'])
-
+key_to_return = {12345:KpubA , 12346: KpubB}
 
 # accept connection from A and send pub key of B
 sktA = socket.socket()
@@ -20,15 +21,15 @@ sktA.listen(2)
 
 while True:
     (clientAskt , clientAaddr) = sktA.accept()
-    print("Connected to ",end="")
+    print("Connected to ",clientAskt)
     req = clientAskt.recv(1024).decode('utf-8').split("|")
     reqPort=int(req[0][2:],16)
-    print(reqPort)
-    T1=req[1]
+    print("Public key requested for:", reqPort)
+    
     #From a premade dictionary get the public key wrt reqPort 
 
     #Now send the requested public key with T1 appended
-    msg = rsa.encrypt(("e:"+str(KpubB['e']) + "n:"+str(KpubB['n']) + "Res:"+ req).encode(), myPrivateKey)
+    msg = rsa.encrypt((pickle.dumps(key_to_return[reqPort]) + bytes("Res:", "ascii")), KpriPKDA)
     clientAskt.send(msg)
     clientAskt.close()
     # break

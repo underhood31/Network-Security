@@ -3,21 +3,22 @@ import rsa
 import time
 import random
 import sys
+import pickle
 
 #Globals(To be read from a file)
 portB=12346
-ABport=99999
-KprivA=???
+ABport=12347
 
-def extractPubKey(res = "Hey"):
-    idx1 = res.find("e")
-    idx2 = res.find("n")
-    idx3 = res.find("Res")
-    k_e = res[idx1+1:idx2]
-    k_n = res[idx2+1:idx3]
-    return rsa.PublicKey(n= k_n, e= k_e)
+mfile = open("a_keyInfo", "rb+")
+availableKeys = pickle.load(mfile)
 
-KpubPKDA = None # rsa.PublicKey object read from a file
+KprivA= availableKeys["k_pri_a"]
+KpubPKDA = availableKeys["k_pub_pkda"]
+
+def extractPubKey(res):
+    idx = res.find(b"Res")
+    return pickle.loads(res[:idx])
+    
 
 # Establish connection with PKDA
 s = socket.socket()
@@ -32,9 +33,12 @@ s.send(initMessage.encode('utf-8'))
 
 # response from PKDA
 response = s.recv(1024)
-response = rsa.decrypt(response, KpubPKDA).decode('utf-8')
+response = rsa.decrypt(response, KpubPKDA)
 KpubB = extractPubKey(response)
+print("Received public key of B", KpubB)
 s.close()
+
+s = socket.socket()
 
 # establish connection with B
 s.connect((host,ABport))
