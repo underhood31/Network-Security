@@ -22,14 +22,15 @@ sktA.listen(2)
 while True:
     (clientAskt , clientAaddr) = sktA.accept()
     print("Connected to ",clientAskt)
-    req = clientAskt.recv(1024).decode('utf-8').split("|")
+    req_unprocessed=clientAskt.recv(1024)
+    req = req_unprocessed.decode('utf-8').split("|")
     reqPort=int(req[0][2:],16)
     print("Public key requested for:", reqPort)
     
     #From a premade dictionary get the public key wrt reqPort 
 
     #Now send the requested public key with T1 appended
-    msg = rsa.encrypt((pickle.dumps(key_to_return[reqPort]) + bytes("Res:", "ascii")), KpriPKDA)
+    msg = rsa.encrypt((pickle.dumps(key_to_return[reqPort]) + "|".encode('utf-8') + req_unprocessed), KpriPKDA)
     clientAskt.send(msg)
     clientAskt.close()
     # break
