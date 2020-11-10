@@ -5,9 +5,11 @@ import random
 import sys
 import pickle
 import concurrent.futures
+
 #Globals(To be read from a file)
 portA=12345
 ABport=12347
+MIN_DELTA=1 #min delta time should be 1 sec
 
 mfile = open("b_keyInfo", "rb+")
 availableKeys = pickle.load(mfile)
@@ -17,8 +19,9 @@ KpubPKDA = availableKeys["k_pub_pkda"]
 
 
 def extractPubKey(res):
-    idx = res.find(b"Res")
-    return pickle.loads(res[:idx])
+    idx = res.find(b"|")
+    return pickle.loads(res[:idx]),res[idx+1:]
+    
 
 def getPubkeyFromPKDA(IdA):
 	# Establish connection with PKDA
@@ -34,8 +37,19 @@ def getPubkeyFromPKDA(IdA):
 	# response from PKDA
 	response = s.recv(1024)
 	response = rsa.decrypt(response, KpubPKDA)
-	pubkey = extractPubKey(response)
+	pubkey,appended_res = extractPubKey(response)
 	print("--> Received public Key of A:", pubkey)
+	appended_res=appended_res.decode('utf-8').split('|')
+	got_time=int(appended_res[1],16)
+	#verify delta time
+	print("--> Verifying delt time in response")
+	delta_time=time.time()-got_time
+	if delta_time>MIN_DELTA:
+		print("!!! Got delayed response, exiting")
+		sys.exit(1)
+	else:
+		print("--> Response time verified")
+
 	s.close()
 
 	return pubkey

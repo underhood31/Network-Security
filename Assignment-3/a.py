@@ -8,7 +8,7 @@ import pickle
 #Globals(To be read from a file)
 portB=12346
 ABport=12347
-MIN_DELTA=2 #min delta time should be 2 sec
+MIN_DELTA=1 #min delta time should be 1 sec
 mfile = open("a_keyInfo", "rb+")
 availableKeys = pickle.load(mfile)
 
@@ -47,7 +47,7 @@ appended_res=appended_res.decode('utf-8').split('|')
 got_time=int(appended_res[1],16)
 
 #verify delta time
-print("--> Verifying delt time in response", KpubB)
+print("--> Verifying delt time in response")
 delta_time=time.time()-got_time
 if delta_time>MIN_DELTA:
 	print("!!! Got delayed response, exiting")
