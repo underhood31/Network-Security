@@ -70,11 +70,6 @@ N1=req[1]
 print("--> Public key requested for:", reqPort)
 
 
-# KpubA=None
-# with concurrent.futures.ThreadPoolExecutor() as executor:
-#     future = executor.submit(getPubkeyFromPKDA, reqPort)
-#     KpubA = future.result()
-
 KpubA=getPubkeyFromPKDA(reqPort)
 
 

@@ -1,7 +1,8 @@
 import socket
 import rsa
 import pickle
-# Key info with PKDA (Better if we read this from a file and write a script to generate that file using rsa.newkey(1024))
+
+print("Public Key Distribution Authority is active now")
 
 mfile = open("pkda_keyInfo", "rb+")
 availableKeys = pickle.load(mfile)
@@ -33,24 +34,6 @@ while True:
     msg = rsa.encrypt((pickle.dumps(key_to_return[reqPort]) + "|".encode('utf-8') + req_unprocessed), KpriPKDA)
     clientAskt.send(msg)
     clientAskt.close()
-    # break
-
-# # accept connection from B and send pub key of A
-
-# sktB = socket.socket()
-# portB = 12346
-# sktB.bind((host, portB))
-# sktB.listen(5)
-# while True:
-#     (clientBskt , clientBaddr) = sktB.accept()
-#     msg = "Connected to B"
-#     req = clientBskt.recv(1024).decode()
-#     msg = rsa.encrypt(("e:"+str(KpubA['e']) + "n:"+str(KpubA['n']) + "Res:"+ req).encode(), myPrivateKey)
-#     clientBskt.send(msg)
-#     clientBskt.close()
-#     break
-
-# print("Done sending keys")
 
 
 
