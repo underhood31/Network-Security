@@ -3,13 +3,17 @@ import sys
 import os
 import hashlib
 import pickle
-
+import datetime
+import rsa
 
 HOST = "localhost"
 PORT = 8050
 BUF_SIZE = 4096
 DOWNLOAD_DIR = "test"
 
+mfile = open("keyInfo", "rb+")
+keys = pickle.load(mfile)
+K_Server_pri = keys["K_Server_pri"]
 
 ## receive connection request from A
 
@@ -25,7 +29,8 @@ print("Connected by", str(addr))
 rcvd = []
 
 while True:
-    rec = sock.recv(BUF_SIZE)
+    print(len(rcvd))
+    rec = conn.recv(BUF_SIZE)
     
     if not rec:
         break
@@ -33,15 +38,23 @@ while True:
     rcvd.append(rec)
 
 conn.close()
-#Add time to array. It will be of fixed length so break into 1024 size chunks and add to array.
 
+print("Done receiving from A")
+
+currTime = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
+rcvd.append(currTime.encode())
+#Add time to array. It will be of fixed length so break into 1024 size chunks and add to array.
+print("Length:", len(rcvd))
 hasher = hashlib.sha3_512()
 
-for i in rcvd:
+for idx,i in enumerate(rcvd):
+    print(idx)
     hasher.update(i)
 
 hashVal = hasher.digest()
-
+hashVal = rsa.encrypt(hashVal, K_Server_pri)
+rcvd.append(hashVal)
+# print("rcvd", rcvd)
 # Break hashVal to 1024 size chunks and add to array
 
 
@@ -52,7 +65,9 @@ hashVal = hasher.digest()
 conn, addr = sock.accept()
 print("Connected by", str(addr))
 
-for i in rcvd:
+for indx, i in enumerate(rcvd):
+    print(indx)
     conn.sendall(i)
+    conn.sendall(b"manavBimarHai")
 
 conn.close()

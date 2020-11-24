@@ -4,7 +4,7 @@ import os
 import rsa
 import pickle
 
-HOST = ""
+HOST = "localhost"
 PORT = 8050
 BUF_SIZE = 1024
 mfile = open("keyInfo", "rb+")
