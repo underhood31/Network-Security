@@ -65,7 +65,7 @@ if (hashA == K_Server_hsh):
 
 K_A_pub = pickle.loads(K_A_pub)
 K_Server_pub = pickle.loads(K_Server_pub)
-input()
+input('press enter to download the file')
 # except:
 #     print("Key Receiving failed")
 
