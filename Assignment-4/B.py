@@ -120,18 +120,19 @@ for i in rcvd[:-1]:
 hashVal = hasher.digest()
 
 if hashVal == Hash:
-    print("Ho gya match")
+    print("Hash Matched")
 else:
-    print("Nahi hua")
+    print("Hash Not Matched")
 
 # calculate hash and verify it
 
 # decrypt file contents one by one and write to new file
-
+filename=rsa.decrypt(rcvd[0],K_A_pub).decode('utf-8')
+print(filename)
 down_file = os.path.join(DOWNLOAD_DIR, 'fileReceivedFromA')
 with open(down_file, 'wb') as output:
     
-    for content in rcvd[:-2]:    #note that rcvd also contain time and hash so they need to be removed
+    for content in rcvd[1:-2]:    #note that rcvd also contain time and hash so they need to be removed
         decrypted = rsa.decrypt(content, K_A_pub)
         output.write(decrypted)
 

@@ -8,8 +8,8 @@ import rsa
 
 HOST = "localhost"
 PORT = 8050
-BUF_SIZE = 40963
-DOWNLOAD_DIR = "test"
+BUF_SIZE = 245
+DOWNLOAD_DIR = "TimeStampDirectory"
 
 mfile = open("Server_keyInfo", "rb+")
 keys = pickle.load(mfile)
@@ -26,12 +26,12 @@ keep_going = 1
 conn, addr = sock.accept()
 print("Connected by", str(addr))
 
-rcvd = []
+name=conn.recv(BUF_SIZE)
+rcvd = [name]
 
 while True:
     print(len(rcvd))
     rec = conn.recv(BUF_SIZE)
-    
     if not rec:
         break
 
@@ -42,7 +42,7 @@ conn.close()
 print("Done receiving from A")
 
 currTime = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S %Z")
-rcvd.append(currTime.encode())
+rcvd.append(currTime.encode('utf-8'))
 #Add time to array. It will be of fixed length so break into 1024 size chunks and add to array.
 print("Length:", len(rcvd))
 hasher = hashlib.sha3_512()

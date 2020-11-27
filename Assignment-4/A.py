@@ -6,7 +6,7 @@ import pickle
 
 HOST = "localhost"
 PORT = 8050
-BUF_SIZE = 1024
+BUF_SIZE = 245
 mfile = open("A_keyInfo", "rb+")
 keys = pickle.load(mfile)
 K_A_pri = keys["K_A_pri"]
@@ -25,13 +25,14 @@ print("Sending File:", file_name)
 
 total_sent = 0
 
-
+sock.send(rsa.encrypt(file_name.encode('utf-8'),K_A_pri))
 with open(file_name,'rb') as output:
     while True:
         data = output.read(BUF_SIZE)
         print("Data Read:", data)
         if not data:
             break
+
         data = rsa.encrypt(data, K_A_pri)
         sock.sendall(data)
         total_sent += len(data)
