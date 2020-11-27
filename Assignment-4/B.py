@@ -9,13 +9,12 @@ import rsa
 HOST = "localhost"
 PORT = 8050
 BUF_SIZE = 1024
-DOWNLOAD_DIR = "test"
+DOWNLOAD_DIR = "Bdir"
 
 
 mfile = open("B_keyInfo", "rb+")
 keys = pickle.load(mfile)
 K_pkda_pub = keys["K_pkda_pub"]
-
 # receive required keys from pkda
 
 port2 = 8082
@@ -78,9 +77,6 @@ try:
 except Exception as e:
     print("cannot connect to server:", e, file=sys.stderr)
 
-down_file = os.path.join(DOWNLOAD_DIR, "FileGotFromA")
-
-
 rcvd = []
 
 rcvStr= b''
@@ -89,20 +85,18 @@ while True:
     rec = sock.recv(BUF_SIZE)
     if not rec:
         break
-    # print("Got:", rec)
     rcvStr += rec
-    # rcvd.append(rec)
 
 
 sock.close()
 
 i = 82
 while True:
-    i = rcvStr.find(b"manavBimarHai")
+    i = rcvStr.find(b"||")
     if (i==-1):
         break
     rcvd.append(rcvStr[:i])
-    rcvStr = rcvStr[i+13:]
+    rcvStr = rcvStr[i+len('||'):]
 
 time, Hash = rcvd[-2], rcvd[-1]
 time = time.decode()
@@ -113,7 +107,8 @@ print("Timestamp is:", time)
 Hash = rsa.decrypt(Hash, K_Server_pub)
 
 hasher = hashlib.sha3_512()
-
+filename=rcvd[0].decode('utf-8')
+# hasher.update(filename.encode('utf-8'))
 for i in rcvd[:-1]:
     hasher.update(i)
 
@@ -127,12 +122,12 @@ else:
 # calculate hash and verify it
 
 # decrypt file contents one by one and write to new file
-filename=rsa.decrypt(rcvd[0],K_A_pub).decode('utf-8')
-print(filename)
-down_file = os.path.join(DOWNLOAD_DIR, 'fileReceivedFromA')
+down_file = os.path.join(DOWNLOAD_DIR, filename)
 with open(down_file, 'wb') as output:
-    
+    j=0
     for content in rcvd[1:-2]:    #note that rcvd also contain time and hash so they need to be removed
+        # print(j)
+        j+=1 
         decrypted = rsa.decrypt(content, K_A_pub)
         output.write(decrypted)
 

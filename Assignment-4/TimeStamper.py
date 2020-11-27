@@ -26,18 +26,37 @@ keep_going = 1
 conn, addr = sock.accept()
 print("Connected by", str(addr))
 
-name=conn.recv(BUF_SIZE)
-rcvd = [name]
+
+rcvd = []
+rcvStr=b''
+# while True:
+#     print(len(rcvd))
+#     rec = conn.recv(BUF_SIZE)
+#     if not rec:
+#         break
+
+#     rcvd.append(rec)
+
+# conn.close()
 
 while True:
-    print(len(rcvd))
+    
     rec = conn.recv(BUF_SIZE)
     if not rec:
         break
+    rcvStr += rec
 
-    rcvd.append(rec)
 
 conn.close()
+
+i = 82
+while True:
+    i = rcvStr.find(b"||")
+    if (i==-1):
+        break
+    rcvd.append(rcvStr[:i])
+    rcvStr = rcvStr[i+len('||'):]
+
 
 print("Done receiving from A")
 
@@ -48,7 +67,7 @@ print("Length:", len(rcvd))
 hasher = hashlib.sha3_512()
 
 for idx,i in enumerate(rcvd):
-    print(idx)
+    # print(idx)
     hasher.update(i)
 
 hashVal = hasher.digest()
@@ -66,8 +85,8 @@ conn, addr = sock.accept()
 print("Connected by", str(addr))
 
 for indx, i in enumerate(rcvd):
-    print(indx)
+    # print(indx)
     conn.sendall(i)
-    conn.sendall(b"manavBimarHai")
-
+    conn.sendall(b"||")
+print("Done sending to B")
 conn.close()
