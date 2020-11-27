@@ -8,10 +8,10 @@ import rsa
 
 HOST = "localhost"
 PORT = 8050
-BUF_SIZE = 4096
+BUF_SIZE = 40963
 DOWNLOAD_DIR = "test"
 
-mfile = open("keyInfo", "rb+")
+mfile = open("Server_keyInfo", "rb+")
 keys = pickle.load(mfile)
 K_Server_pri = keys["K_Server_pri"]
 

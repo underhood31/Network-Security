@@ -7,7 +7,7 @@ import pickle
 HOST = "localhost"
 PORT = 8050
 BUF_SIZE = 1024
-mfile = open("keyInfo", "rb+")
+mfile = open("A_keyInfo", "rb+")
 keys = pickle.load(mfile)
 K_A_pri = keys["K_A_pri"]
 

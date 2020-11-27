@@ -12,15 +12,65 @@ BUF_SIZE = 1024
 DOWNLOAD_DIR = "test"
 
 
-mfile = open("keyInfo", "rb+")
+mfile = open("B_keyInfo", "rb+")
 keys = pickle.load(mfile)
-K_A_pub = keys["K_A_pub"]
-K_Server_pub = keys["K_Server_pub"]
+K_pkda_pub = keys["K_pkda_pub"]
+
+# receive required keys from pkda
+
+port2 = 8082
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+# try:
+sock.connect((HOST, port2))
+print("Connected to PKDA")
+# except Exception as e:
+#     print("cannot connect to pkda:", e, file=sys.stderr)
+
+stringIn = b''
+
+while True:
+    
+    rec = sock.recv(BUF_SIZE)
+    if not rec:
+        break
+    stringIn += rec
+    
+sock.close()
 
 
+i1 = stringIn.find(b'Hsh')
+K_A_pub = stringIn[:i1]
+i2 = stringIn.find(b'Srv')
+K_A_hsh = stringIn[i1+3:i2]
+i3 = stringIn.find(b'Hsh', i2+1)
+K_Server_pub = stringIn[i2+3:i3]
+K_Server_hsh = stringIn[i3+3:]
+# print("Hash:", K_A_hsh)
+
+K_A_hsh = rsa.decrypt(K_A_hsh, K_pkda_pub)
+
+K_Server_hsh = rsa.decrypt(K_Server_hsh, K_pkda_pub)
+
+hasher =  hashlib.sha3_512()
+hasher.update(K_A_pub)
+hashA = hasher.digest()
+if (hashA == K_A_hsh):
+    print('Public Key of A verified')
+
+hasher =  hashlib.sha3_512()
+hasher.update(K_Server_pub)
+hashA = hasher.digest()
+if (hashA == K_Server_hsh):
+    print('Public Key of Server verified')
+
+K_A_pub = pickle.loads(K_A_pub)
+K_Server_pub = pickle.loads(K_Server_pub)
+input()
+# except:
+#     print("Key Receiving failed")
 
 
-
+##############
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 try:
     sock.connect((HOST, PORT))
